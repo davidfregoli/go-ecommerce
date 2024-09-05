@@ -1,0 +1,13 @@
+package components
+
+import . "fregoli.dev/go-ecommerce/format"
+import "fregoli.dev/go-ecommerce/types"
+
+templ ProductPrice(product types.ProductFull) {
+	<h3 class="product-price">
+		{ USDD(product.Price, product.Discount) }
+		if product.Discount > 0 {
+			<del class="product-old-price">{ USD(product.Price) }</del>
+		}
+	</h3>
+}

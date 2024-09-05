@@ -1,0 +1,289 @@
+package components
+
+import "fregoli.dev/go-ecommerce/types"
+import . "fregoli.dev/go-ecommerce/format"
+import "fmt"
+import "slices"
+
+templ Store(data types.Data) {
+	<!-- BREADCRUMB -->
+	<div id="breadcrumb" class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<div class="col-md-12">
+					<ul class="breadcrumb-tree">
+						<li><a href="/">Home</a></li>
+						if data.Store.Category == "" {
+							<li class="active">Store</li>
+						} else {
+							<li><a href="/products/">Store</a></li>
+							<li class="active">{ data.Store.Category }</li>
+						}
+					</ul>
+				</div>
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /BREADCRUMB -->
+	<!-- SECTION -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<!-- ASIDE -->
+				<div id="aside" class="col-md-3">
+					<!-- aside Widget -->
+					if data.Store.Category == "" {
+						<div class="aside">
+							<h3 class="aside-title">Categories</h3>
+							<div class="checkbox-filter">
+								<form class="store-filter">
+									for _, category := range data.Store.Categories {
+										<div class="input-checkbox">
+											<input
+												checked?={ slices.Contains(data.Store.QueryParentCategory, int64(category.ID)) }
+												class="filter-checkbox"
+												type="checkbox"
+												name="parentCategory"
+												id={ fmt.Sprintf("category-%v", category.ID) }
+												value={ S(category.ID) }
+											/>
+											<label for={ fmt.Sprintf("category-%v", category.ID) }>
+												<span></span>
+												<a href={ CategoryURL(data.Store.URL, category.Name) }>{ category.Name }</a>
+											</label>
+										</div>
+									}
+								</form>
+							</div>
+						</div>
+					} else {
+						<div class="aside">
+							<h3 class="aside-title">{ data.Store.Category }</h3>
+							<div class="checkbox-filter">
+								<form class="store-filter">
+									for _, category := range data.Store.Categories {
+										<div class="input-checkbox">
+											<input
+												checked?={ slices.Contains(data.Store.QueryCategory, int64(category.ID)) }
+												class="filter-checkbox"
+												type="checkbox"
+												name="subCategory"
+												id={ fmt.Sprintf("category-%v", category.ID) }
+												value={ S(category.ID) }
+											/>
+											<label for={ fmt.Sprintf("category-%v", category.ID) }>
+												<span></span>
+												{ category.Name }
+											</label>
+										</div>
+									}
+								</form>
+							</div>
+						</div>
+					}
+					<!-- /aside Widget -->
+					if data.Store.PriceMax > 0 {
+						<!-- aside Widget -->
+						<div class="aside">
+							<h3 class="aside-title">Price</h3>
+							<form class="store-filter">
+								<div class="price-filter">
+									<div class="price-slider" data-min="0" data-max={ S(data.Store.PriceMax) }></div>
+									<div class="input-number price-min">
+										<input class="price-min" type="number" name="priceMin" value={ S(data.Store.Price[0]) }/>
+										<span class="qty-up">+</span>
+										<span class="qty-down">-</span>
+									</div>
+									<span>-</span>
+									<div class="input-number price-max">
+										<input class="price-max" type="number" name="priceMax" value={ S(data.Store.Price[1]) }/>
+										<span class="qty-up">+</span>
+										<span class="qty-down">-</span>
+									</div>
+								</div>
+							</form>
+						</div>
+					}
+					<!-- /aside Widget -->
+					if data.Store.Category != "" {
+						<!-- aside Widget -->
+						<div class="aside">
+							<h3 class="aside-title">By</h3>
+							<div class="checkbox-filter">
+								<form class="store-filter">
+									for _, brand := range data.Store.Brands {
+										<div class="input-checkbox">
+											<input
+												class="filter-checkbox"
+												checked?={ slices.Contains(data.Store.QueryBrand, int64(brand.ID)) }
+												type="checkbox"
+												name="brand"
+												id={ fmt.Sprintf("brand-%v", brand.ID) }
+												value={ S(brand.ID) }
+											/>
+											<label for={ fmt.Sprintf("brand-%v", brand.ID) }>
+												<span></span>
+												{ brand.Name }
+											</label>
+										</div>
+									}
+								</form>
+							</div>
+						</div>
+						<!-- /aside Widget -->
+					}
+					<!-- aside Widget -->
+					<div class="aside">
+						<h3 class="aside-title">Top selling</h3>
+						<div class="product-widget">
+							<div class="product-img">
+								<img src="/assets/images/product01.png" alt=""/>
+							</div>
+							<div class="product-body">
+								<p class="product-category">Category</p>
+								<h3 class="product-name"><a href="#">product name goes here</a></h3>
+								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+							</div>
+						</div>
+						<div class="product-widget">
+							<div class="product-img">
+								<img src="/assets/images/product02.png" alt=""/>
+							</div>
+							<div class="product-body">
+								<p class="product-category">Category</p>
+								<h3 class="product-name"><a href="#">product name goes here</a></h3>
+								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+							</div>
+						</div>
+						<div class="product-widget">
+							<div class="product-img">
+								<img src="/assets/images/product03.png" alt=""/>
+							</div>
+							<div class="product-body">
+								<p class="product-category">Category</p>
+								<h3 class="product-name"><a href="#">product name goes here</a></h3>
+								<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+							</div>
+						</div>
+					</div>
+					<!-- /aside Widget -->
+				</div>
+				<!-- /ASIDE -->
+				<!-- STORE -->
+				<div id="store" class="col-md-9">
+					if data.Store.Search != "" {
+						<form class="store-filter">
+							<input type="hidden" name="search" value={ data.Store.Search }/>
+						</form>
+						<form action={ templ.SafeURL(data.Store.URL) } method="GET">
+							for k, vs := range URLParams(data.Store.URL) {
+								if k == "search" { continue }
+								if k == "page" { continue }
+								for _, v := range vs {
+									<input type="hidden" name={ k } value={ v }/>
+								}
+							}
+							<p class="search-filter">
+								<button class="quick-view"><i class="fa fa-remove"></i></button>
+								Search results for: <strong>{ data.Store.Search }</strong>
+							</p>
+						</form>
+					}
+					<!-- store top filter -->
+					<form class="store-filter clearfix">
+						<div class="store-sort">
+							<label>
+								Sort By:
+								<select class="input-select" name="orderBy">
+									<option value="discount" selected?={ data.Store.OrderBy=="discount" }>Discount</option>
+									<option value="name" selected?={ data.Store.OrderBy=="name" }>Name</option>
+									<option value="popularity" selected?={ data.Store.OrderBy=="popularity" }>Popularity</option>
+									<option value="price" selected?={ data.Store.OrderBy=="price" }>Price</option>
+								</select>
+							</label>
+						</div>
+						<ul class="store-pagination">
+							for i := range data.Store.CountPages() {
+								<li class={ templ.KV("active", i+1 == data.Store.Page) }><a href={ PageURL(data.Store.URL, i+1) }>{ S(i+1) }</a></li>
+							}
+						</ul>
+					</form>
+					<!-- /store top filter -->
+					<!-- store products -->
+					<div class="row">
+						for _, product := range data.Store.Products {
+							<!-- product -->
+							<div class="col-md-4 col-xs-6">
+								<!-- product -->
+								<div class="product">
+									<div class="product-img">
+										<img src={ F("/assets/images/products/%v.jpg", product.Asin) } alt=""/>
+										<div class="product-label">
+											if product.Discount > 0 {
+												<span class="sale">-{ S(product.Discount) }%</span>
+											}
+											// <span class="new">NEW</span>
+										</div>
+									</div>
+									<div class="product-body">
+										<p class="product-category">{ product.ParentCategoryName } - { product.Category.Name }</p>
+										<h3 class="product-name">
+											<a
+												href={ URL("products", product.ParentCategoryName, product.Category.Name, product.Brand.Slug, product.Slug) }
+											>{ product.Name }<br/><sub>{ product.Brand.Name }</sub></a>
+										</h3>
+										@ProductPrice(product)
+										<div class="product-rating">
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+											<i class="fa fa-star"></i>
+										</div>
+										<div class="product-btns">
+											@ProductWishlist(product, data.Wishlist, false)
+											<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+										</div>
+									</div>
+									<div class="add-to-cart">
+										<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+									</div>
+								</div>
+								<!-- /product -->
+							</div>
+							<!-- /product -->
+						}
+					</div>
+					<!-- /store products -->
+					<!-- store bottom filter -->
+					<div class="clearfix">
+						if len(data.Store.Products) >1 {
+							<span class="store-qty">
+								<small>Showing results</small>
+								<strong>{ S((data.Store.Page-1)*9+1) }</strong> <small>through</small> <strong>{ S((data.Store.Page-1)*9+len(data.Store.Products)) }</strong>
+							</span>
+						} else if len(data.Store.Products) == 1 {
+							<span class="store-qty"><small>Showing result</small> <strong>{ S((data.Store.Page-1)*9+1) }</strong></span>
+						}
+						<ul class="store-pagination">
+							for i := range data.Store.CountPages() {
+								<li class={ templ.KV("active", i+1 == data.Store.Page) }><a href={ PageURL(data.Store.URL, i+1) }>{ S(i+1) }</a></li>
+							}
+						</ul>
+					</div>
+					<!-- /store bottom filter -->
+				</div>
+				<!-- /STORE -->
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /SECTION -->
+}

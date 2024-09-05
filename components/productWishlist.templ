@@ -1,0 +1,29 @@
+package components
+
+import "slices"
+import . "fregoli.dev/go-ecommerce/format"
+import "fregoli.dev/go-ecommerce/types"
+
+templ ProductWishlist(product types.ProductFull, wishlist []int32, large bool) {
+	if large {
+		if slices.Contains(wishlist, product.ID) {
+			<form method="POST" class="product-btns" action="/wishlist/remove">
+				<input type="hidden" name="product" value={ S(product.ID) }/>
+				<li><i class="fa fa-heart"></i><input type="submit" value="remove form wishlist"/> </li>
+			</form>
+		} else {
+			<form method="POST" class="product-btns" action="/wishlist/add">
+				<input type="hidden" name="product" value={ S(product.ID) }/>
+				<li><i class="fa fa-heart-o"></i><input type="submit" value="add to wishlist"/> </li>
+			</form>
+		}
+	}
+	if !large {
+		<button class={ "toggle-wishlist", templ.KV("wishlisted", slices.Contains(wishlist, product.ID)) } data-product={ S(product.ID) }>
+			<i class="fa fa-heart on"></i>
+			<span class="tooltipp on">remove from wishlist</span>
+			<i class="fa fa-heart-o off"></i>
+			<span class="tooltipp off">add to wishlist</span>
+		</button>
+	}
+}

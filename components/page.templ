@@ -1,0 +1,24 @@
+package components
+
+import "fregoli.dev/go-ecommerce/types"
+
+templ Page(data types.Data) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			@Head(data)
+		</head>
+		<body>
+			@Header(data)
+			switch data.Page {
+				case "home":
+					@Home(data)
+				case "product":
+					@Product(data)
+				case "store":
+					@Store(data)
+			}
+			@Footer(data)
+		</body>
+	</html>
+}
